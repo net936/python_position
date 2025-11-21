@@ -74,7 +74,7 @@ WSGI_APPLICATION = 'mask.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'python_mask',  # 创建的数据库
+        'NAME': 'python_position',  # 创建的数据库
         'USER': 'root',
         'PASSWORD': '4643830',  # 你的mysql密码
         'HOST': '127.0.0.1',

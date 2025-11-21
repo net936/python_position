@@ -6,14 +6,15 @@ from django.urls import reverse
 from django.views import generic
 from ratelimit.decorators import ratelimit
 from app.forms import CommitForm
-from app.models import Product
+from app.models import Job
 from helpers import get_page_list
 
 
 class IndexView(generic.ListView):
-    model = Product
+    """岗位列表页"""
+    model = Job
     template_name = 'app/index.html'
-    context_object_name = 'product_list'
+    context_object_name = 'job_list'
     paginate_by = 15
     c = None
 
@@ -29,17 +30,22 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         self.c = self.request.GET.get("c", None)
         if self.c:
-            return Product.objects.filter(type=self.c).filter(status=1).order_by('-timestamp')
+            return Job.objects.filter(job_type=self.c).filter(status=1).order_by('-timestamp')
         else:
-            return Product.objects.filter(status=1).order_by('-timestamp')
+            return Job.objects.filter(status=1).order_by('-timestamp')
 
 
 class DetailView(generic.DetailView):
-    model = Product
+    """岗位详情页"""
+    model = Job
     template_name = 'app/detail.html'
+    context_object_name = 'job'
 
     def get_object(self, queryset=None):
         obj = super().get_object()
+        # 增加浏览量
+        obj.pv += 1
+        obj.save(update_fields=['pv'])
         return obj
 
     def get_context_data(self, **kwargs):
@@ -48,8 +54,8 @@ class DetailView(generic.DetailView):
 
 
 class CommitView(generic.CreateView):
-
-    model = Product
+    """岗位发布页"""
+    model = Job
     form_class = CommitForm
     template_name = 'app/commit.html'
 
@@ -62,5 +68,5 @@ class CommitView(generic.CreateView):
         return super().post(request, *args, **kwargs)
 
     def get_success_url(self):
-        messages.success(self.request, "发布成功! ")
+        messages.success(self.request, "发布成功! 等待审核通过后将会展示")
         return reverse('app:commit')
