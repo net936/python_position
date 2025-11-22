@@ -1,17 +1,306 @@
 {% load static %}
 
-<div class="ui sticky fixed  menu">
-    <div class="ui container">
-        <a href="/" class="borderless header item">
-            <img class="logo" src="{% static 'img/logo.png' %}">
-            在线招聘平台
+<style>
+    /* 重置样式 */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* 顶部导航栏 */
+    .top-navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background-color: #ffffff;
+        border-bottom: 1px solid #e0e0e0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        z-index: 1000;
+    }
+
+    /* 导航容器 */
+    .nav-container {
+        max-width: 1200px;
+        height: 100%;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    /* Logo区域 */
+    .nav-logo-area {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: #333;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .nav-logo-area:hover {
+        color: #2185d0;
+        text-decoration: none;
+    }
+
+    .nav-logo-area:focus {
+        text-decoration: none;
+    }
+
+    .nav-logo-area img {
+        height: 35px;
+        width: auto;
+    }
+
+    /* 右侧区域 */
+    .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    /* 搜索表单 */
+    .search-form {
+        display: flex;
+        align-items: center;
+        margin: 0;
+    }
+
+    /* 搜索框容器 */
+    .search-box {
+        position: relative;
+        width: 350px;
+    }
+
+    .search-box input {
+        width: 100%;
+        height: 38px;
+        padding: 8px 40px 8px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    .search-box input:focus {
+        border-color: #2185d0;
+    }
+
+    .search-box input::placeholder {
+        color: #999;
+    }
+
+    /* 搜索图标 */
+    .search-icon {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #666;
+        font-size: 16px;
+    }
+
+    .search-icon:hover {
+        color: #2185d0;
+    }
+
+    /* 发布按钮 */
+    .publish-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #fff;
+        color: #2185d0;
+        border: 1px solid #2185d0;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.3s;
+        white-space: nowrap;
+    }
+
+    .publish-btn:hover {
+        background-color: #2185d0;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .publish-btn:focus {
+        text-decoration: none;
+        outline: none;
+    }
+
+    .publish-btn:active {
+        text-decoration: none;
+    }
+
+    /* 移动端适配 - 平板 */
+    @media only screen and (max-width: 768px) {
+        .top-navbar {
+            height: 55px;
+        }
+
+        .nav-container {
+            padding: 0 15px;
+        }
+
+        .nav-logo-area {
+            font-size: 14px;
+        }
+
+        .nav-logo-area img {
+            height: 28px;
+        }
+
+        .nav-right {
+            gap: 10px;
+        }
+
+        .search-box {
+            width: 220px;
+        }
+
+        .search-box input {
+            height: 34px;
+            font-size: 13px;
+            padding: 6px 35px 6px 12px;
+        }
+
+        .publish-btn {
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+    }
+
+    /* 移动端适配 - 手机 */
+    @media only screen and (max-width: 480px) {
+        .top-navbar {
+            height: 50px;
+        }
+
+        .nav-container {
+            padding: 0 10px;
+        }
+
+        .nav-logo-area {
+            font-size: 12px;
+            gap: 6px;
+        }
+
+        .nav-logo-area img {
+            height: 24px;
+        }
+
+        .nav-right {
+            gap: 8px;
+        }
+
+        .search-box {
+            width: 150px;
+        }
+
+        .search-box input {
+            height: 32px;
+            font-size: 12px;
+            padding: 5px 32px 5px 10px;
+        }
+
+        .search-icon {
+            font-size: 14px;
+            right: 10px;
+        }
+
+        .publish-btn {
+            padding: 7px 12px;
+            font-size: 12px;
+        }
+    }
+
+    /* 为页面主体添加顶部间距，避免被固定导航遮挡 */
+    body {
+        padding-top: 60px;
+    }
+
+    @media only screen and (max-width: 768px) {
+        body {
+            padding-top: 55px;
+        }
+    }
+
+    @media only screen and (max-width: 480px) {
+        body {
+            padding-top: 50px;
+        }
+    }
+</style>
+
+<nav class="top-navbar">
+    <div class="nav-container">
+        <!-- Logo区域 -->
+        <a href="/" class="nav-logo-area">
+            <img src="{% static 'img/logo.png' %}" alt="Logo">
+            <span>在线招聘平台</span>
         </a>
-        <div class="v-header-extra">
-            <div class="ui small icon input v-video-search">
-                <input class="prompt" value="{{ q }}" type="text" placeholder="搜索职位" id="v-search">
-                <i id="search" class="search icon" style="cursor:pointer;"></i>
-            </div>
-            <a class="ui tiny secondary basic button" id="v-header-login" target="_blank" href="{% url 'app:commit' %}">发布岗位</a>
+
+        <!-- 右侧区域 -->
+        <div class="nav-right">
+            <!-- 搜索表单 -->
+            <form action="{% url 'app:search' %}" method="get" class="search-form" id="search-form">
+                <div class="search-box">
+                    <input
+                        type="text"
+                        name="q"
+                        id="search-input"
+                        placeholder="搜索职位、公司、地点"
+                        value="{{ q }}"
+                        autocomplete="off">
+                    <span class="search-icon" id="search-icon">🔍</span>
+                </div>
+            </form>
+
+            <!-- 发布岗位按钮 -->
+            <a href="{% url 'app:commit' %}" class="publish-btn" target="_blank">发布岗位</a>
         </div>
     </div>
-</div>
+</nav>
+
+<script>
+    // 搜索功能
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchIcon = document.getElementById('search-icon');
+        const searchForm = document.getElementById('search-form');
+        const searchInput = document.getElementById('search-input');
+
+        // 点击搜索图标触发搜索
+        if (searchIcon) {
+            searchIcon.addEventListener('click', function() {
+                const query = searchInput.value.trim();
+                if (query) {
+                    searchForm.submit();
+                } else {
+                    searchInput.focus();
+                }
+            });
+        }
+
+        // 按回车键触发搜索
+        if (searchInput) {
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const query = searchInput.value.trim();
+                    if (query) {
+                        searchForm.submit();
+                    }
+                }
+            });
+        }
+    });
+</script>

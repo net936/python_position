@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render
+from django.db.models import Q
 
 # Create your views here.
 from django.urls import reverse
@@ -33,6 +34,39 @@ class IndexView(generic.ListView):
             return Job.objects.filter(job_type=self.c).filter(status=1).order_by('-timestamp')
         else:
             return Job.objects.filter(status=1).order_by('-timestamp')
+
+
+class SearchView(generic.ListView):
+    """搜索结果页"""
+    model = Job
+    template_name = 'app/search.html'
+    context_object_name = 'job_list'
+    paginate_by = 15
+
+    def get_queryset(self):
+        query = self.request.GET.get('q', '').strip()
+        if query:
+            # 使用Q对象进行多字段搜索：职位名称、公司名称、工作地点、职位描述
+            return Job.objects.filter(
+                Q(position__icontains=query) |
+                Q(company__icontains=query) |
+                Q(location__icontains=query) |
+                Q(description__icontains=query)
+            ).filter(status=1).order_by('-timestamp')
+        else:
+            return Job.objects.none()
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(SearchView, self).get_context_data(**kwargs)
+        paginator = context.get('paginator')
+        page = context.get('page_obj')
+        page_list = get_page_list(paginator, page)
+        query = self.request.GET.get('q', '').strip()
+
+        context['page_list'] = page_list
+        context['q'] = query
+        context['job_count'] = self.get_queryset().count()
+        return context
 
 
 class DetailView(generic.DetailView):
