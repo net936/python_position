@@ -24,7 +24,7 @@ SECRET_KEY = '^0=kibvej3mquo#t+&-z+3bc15ahijvdb$q30g&0@q#!^5r$wo'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', '127.0.0.1']
+ALLOWED_HOSTS = ['*', '127.0.0.1', 'localhost', 'position.gitapp.cn']
 
 # Application definition
 
@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',
     'app'
 ]
 
@@ -61,6 +62,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'app.context_processors.site_settings',  # 添加网站配置
             ],
         },
     },
@@ -123,13 +125,20 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 
+# 网站域名配置
+SITE_PROTOCOL = os.environ.get('SITE_PROTOCOL', 'https')  # 协议: http 或 https
+SITE_DOMAIN = os.environ.get('SITE_DOMAIN', 'position.gitapp.cn')  # 域名
+SITE_URL = f"{SITE_PROTOCOL}://{SITE_DOMAIN}"  # 完整网站地址
+
 # Cloudflare Turnstile 配置
 
-# 测试环境
+# 测试环境（使用测试密钥）
 TURNSTILE_SITE_KEY = '3x00000000000000000000FF'
 TURNSTILE_SECRET_KEY = '1x0000000000000000000000000000000AA'
 
-# 正式环境
+# 正式环境（使用真实域名密钥）
 # TURNSTILE_SITE_KEY = '0x4AAAAAACCanMTKEud9vkNJ'
 # TURNSTILE_SECRET_KEY = '0x4AAAAAACCanJz3sXKNbOQ4OBPyRcAyfU0'
+
+
 

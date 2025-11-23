@@ -114,6 +114,7 @@ class CommitView(generic.CreateView):
 
 
 @require_POST
+@csrf_exempt
 def verify_turnstile(request):
     """验证 Cloudflare Turnstile token"""
     try:
@@ -162,3 +163,13 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+
+class AboutView(generic.TemplateView):
+    """关于我们页面"""
+    template_name = 'app/about.html'
+
+
+class PrivacyView(generic.TemplateView):
+    """隐私政策页面"""
+    template_name = 'app/privacy.html'

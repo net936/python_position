@@ -1,21 +1,67 @@
 {% load static %}
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- 基础 Meta 标签 -->
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>在线招聘平台</title>
-    <meta name="keywords" content="招聘平台,在线招聘,求职,岗位,职位">
-    <meta name="description" content="简易在线招聘平台，提供岗位发布与求职服务">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 
+    <!-- 页面标题 -->
+    <title>{% block title %}职位招聘_在线招聘平台_远程岗位{% endblock %}</title>
+
+    <!-- SEO Meta 标签 -->
+    <meta name="keywords" content="{% block keywords %}Python招聘,Python岗位,在线招聘,远程工作,全职招聘,兼职招聘,实习岗位,程序员求职{% endblock %}">
+    <meta name="description" content="{% block description %}专注于Python及相关技术岗位的在线招聘平台，提供全职、兼职、实习、外包等多种岗位类型，支持远程工作，为求职者和企业搭建高效沟通桥梁{% endblock %}">
+    <meta name="author" content="在线招聘平台">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    <meta name="baiduspider" content="index, follow">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{% block canonical %}{{ SITE_URL }}{{ request.path }}{% endblock %}">
+
+    <!-- Open Graph 标签 (社交媒体分享优化) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="在线招聘平台">
+    <meta property="og:title" content="{% block og_title %}Python职位招聘_在线招聘平台{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}专注于Python及相关技术岗位的在线招聘平台，提供全职、兼职、实习、外包等多种岗位类型{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}{{ SITE_URL }}{{ request.path }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ SITE_URL }}{% static 'img/logo.png' %}{% endblock %}">
+    <meta property="og:locale" content="zh_CN">
+
+    <!-- Twitter Card 标签 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}Python职位招聘_在线招聘平台{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}专注于Python及相关技术岗位的在线招聘平台{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ SITE_URL }}{% static 'img/logo.png' %}{% endblock %}">
+
+    <!-- 移动端优化 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="招聘平台">
+    <meta name="theme-color" content="#2185d0">
+
+    <!-- 网站图标 -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
+
+    <!-- DNS 预解析和预连接 -->
+    <link rel="dns-prefetch" href="//cdn.staticfile.org">
+    <link rel="preconnect" href="//cdn.staticfile.org" crossorigin>
+    <link rel="dns-prefetch" href="//challenges.cloudflare.com">
+
+    <!-- 样式表 -->
     <link rel="stylesheet" type="text/css" href="https://cdn.staticfile.org/semantic-ui/2.4.1/semantic.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'css/semantic.custom.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/style_v2.css' %}">
     {% block css %}{% endblock css %}
 
-    <script>
-    </script>
+    <!-- 结构化数据 -->
+    {% block structured_data %}{% endblock structured_data %}
 
 </head>
 <body>

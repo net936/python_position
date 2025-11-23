@@ -1,0 +1,21 @@
+# robots.txt - 搜索引擎爬虫规则
+# 注意：更换域名后需要手动修改下方的 Sitemap URL
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /static/
+Disallow: /app/verify-turnstile/
+
+# 百度爬虫
+User-agent: Baiduspider
+Allow: /
+Disallow: /admin/
+
+# 谷歌爬虫
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+
+# 站点地图（更换域名时请修改此 URL）
+Sitemap: https://position.gitapp.cn/sitemap.xml

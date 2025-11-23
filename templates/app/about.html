@@ -1,0 +1,419 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}关于我们 - 在线招聘平台{% endblock %}
+
+{% block keywords %}关于我们,招聘平台介绍,企业使命,团队介绍,平台优势{% endblock %}
+
+{% block description %}在线招聘平台致力于为程序员和科技企业搭建高效的人才匹配桥梁。我们专注于Python及相关技术岗位招聘，提供全职、兼职、实习、外包等多种工作机会。{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "关于我们",
+  "url": "{{ SITE_URL }}/about",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "在线招聘平台",
+    "url": "{{ SITE_URL }}",
+    "logo": "{{ SITE_URL }}{% static 'img/logo.png' %}",
+    "description": "专注于Python及技术人才的在线招聘服务平台",
+    "foundingDate": "2023",
+    "slogan": "连接优秀人才，创造无限可能"
+  }
+}
+</script>
+{% endblock %}
+
+{% block css %}
+<style>
+    .about-wrapper {
+        padding: 40px 0;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .about-hero {
+        text-align: center;
+        padding: 60px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 12px;
+        margin-bottom: 50px;
+    }
+
+    .about-hero h1 {
+        font-size: 42px;
+        margin-bottom: 20px;
+        font-weight: 700;
+    }
+
+    .about-hero p {
+        font-size: 18px;
+        line-height: 1.8;
+        max-width: 800px;
+        margin: 0 auto;
+        opacity: 0.95;
+    }
+
+    .section {
+        margin-bottom: 60px;
+    }
+
+    .section-title {
+        font-size: 32px;
+        color: #333;
+        margin-bottom: 30px;
+        text-align: center;
+        font-weight: 600;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: #2185d0;
+    }
+
+    .section-content {
+        font-size: 16px;
+        line-height: 1.8;
+        color: #555;
+        text-align: center;
+        max-width: 900px;
+        margin: 0 auto 40px;
+    }
+
+    /* 特色卡片 */
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        margin-top: 40px;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 35px 25px;
+        border-radius: 10px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+        text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .feature-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    .feature-card p {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.6;
+    }
+
+    /* 统计数据 */
+    .stats-section {
+        background: #f8f9fa;
+        padding: 50px 30px;
+        border-radius: 10px;
+        margin: 50px 0;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+        text-align: center;
+    }
+
+    .stat-item {
+        padding: 20px;
+    }
+
+    .stat-number {
+        font-size: 42px;
+        font-weight: 700;
+        color: #2185d0;
+        margin-bottom: 10px;
+    }
+
+    .stat-label {
+        font-size: 16px;
+        color: #666;
+    }
+
+    /* 团队介绍 */
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+        margin-top: 40px;
+    }
+
+    .team-member {
+        text-align: center;
+        background: white;
+        padding: 25px 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: transform 0.3s;
+    }
+
+    .team-member:hover {
+        transform: translateY(-5px);
+    }
+
+    .team-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin: 0 auto 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        color: white;
+    }
+
+    .team-name {
+        font-size: 18px;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .team-role {
+        font-size: 14px;
+        color: #888;
+    }
+
+    /* 价值观 */
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+        margin-top: 40px;
+    }
+
+    .value-item {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        border-left: 4px solid #2185d0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .value-item h3 {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 12px;
+        font-weight: 600;
+    }
+
+    .value-item p {
+        font-size: 15px;
+        color: #666;
+        line-height: 1.7;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .about-hero h1 {
+            font-size: 32px;
+        }
+
+        .about-hero p {
+            font-size: 16px;
+        }
+
+        .features-grid,
+        .stats-grid,
+        .team-grid,
+        .values-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .section-title {
+            font-size: 26px;
+        }
+    }
+
+    @media (max-width: 1024px) and (min-width: 769px) {
+        .features-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .stats-grid,
+        .team-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+{% endblock css %}
+
+{% block content %}
+<div class="about-wrapper">
+    <!-- Hero 区域 -->
+    <div class="about-hero">
+        <h1>关于我们</h1>
+        <p>我们是一个专注于技术人才招聘的在线平台，致力于为优秀的程序员和科技企业搭建高效的沟通桥梁。<br>通过创新的技术和贴心的服务，让人才匹配变得更简单、更高效。</p>
+    </div>
+
+    <!-- 使命愿景 -->
+    <div class="section">
+        <h2 class="section-title">我们的使命</h2>
+        <p class="section-content">
+            连接优秀人才，创造无限可能。我们相信每一位技术人才都值得被发现，每一家优秀企业都应该找到最合适的团队成员。通过技术驱动，我们让招聘变得更透明、更高效、更人性化。
+        </p>
+    </div>
+
+    <!-- 平台优势 -->
+    <div class="section">
+        <h2 class="section-title">平台优势</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>精准匹配</h3>
+                <p>基于智能算法，精准匹配求职者技能与企业需求，提高招聘成功率</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>高效便捷</h3>
+                <p>简化招聘流程，在线沟通协作，让招聘变得更快速、更便捷</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>安全可靠</h3>
+                <p>严格的信息审核机制，保护求职者和企业的隐私安全</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">💼</div>
+                <h3>多元岗位</h3>
+                <p>涵盖全职、兼职、实习、外包等多种岗位类型，满足不同需求</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🌏</div>
+                <h3>远程工作</h3>
+                <p>支持远程办公岗位，打破地域限制，给予更多选择自由</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h3>专业服务</h3>
+                <p>专业的客服团队，全程协助招聘流程，提供贴心服务</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 平台数据 -->
+    <div class="stats-section">
+        <h2 class="section-title" style="color: #333; margin-bottom: 40px;">平台数据</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">1000+</div>
+                <div class="stat-label">注册用户</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">200+</div>
+                <div class="stat-label">活跃岗位</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">30+</div>
+                <div class="stat-label">合作企业</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">95%</div>
+                <div class="stat-label">满意度</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 核心价值观 -->
+    <div class="section">
+        <h2 class="section-title">核心价值观</h2>
+        <div class="values-grid">
+            <div class="value-item">
+                <h3>🚀 创新驱动</h3>
+                <p>不断探索新技术、新模式，用创新思维解决招聘痛点，为用户创造更大价值。</p>
+            </div>
+
+            <div class="value-item">
+                <h3>🤝 用户至上</h3>
+                <p>始终将用户需求放在首位，倾听反馈，持续优化产品和服务体验。</p>
+            </div>
+
+            <div class="value-item">
+                <h3>💡 专业高效</h3>
+                <p>以专业的态度对待每一个招聘需求，用高效的服务赢得用户信赖。</p>
+            </div>
+
+            <div class="value-item">
+                <h3>🌟 诚信透明</h3>
+                <p>坚持诚信经营，信息透明公开，为求职者和企业营造公平环境。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 团队介绍 -->
+    <div class="section">
+        <h2 class="section-title">核心团队</h2>
+        <p class="section-content" style="margin-bottom: 40px;">
+            我们的团队由来自互联网、人力资源、技术开发等领域的专业人士组成，<br>
+            共同致力于打造最优质的技术人才招聘平台。
+        </p>
+        <div class="team-grid">
+            <div class="team-member">
+                <div class="team-avatar">👨‍💼</div>
+                <div class="team-name">丁林</div>
+                <div class="team-role">创始人 & CEO</div>
+            </div>
+
+            <div class="team-member">
+                <div class="team-avatar">👩‍💻</div>
+                <div class="team-name">武松</div>
+                <div class="team-role">技术总监</div>
+            </div>
+
+            <div class="team-member">
+                <div class="team-avatar">👨‍🎨</div>
+                <div class="team-name">曹操</div>
+                <div class="team-role">产品经理</div>
+            </div>
+
+            <div class="team-member">
+                <div class="team-avatar">👩‍💼</div>
+                <div class="team-name">刘备</div>
+                <div class="team-role">运营总监</div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+{% endblock content %}

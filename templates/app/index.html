@@ -1,6 +1,39 @@
 {% extends 'base/base.html' %}
 {% load static %}
 
+{% block title %}职位招聘_全职/兼职/实习岗位_在线招聘平台{% endblock %}
+
+{% block keywords %}Python招聘,Python开发,程序员招聘,全职岗位,兼职岗位,实习岗位,外包项目,远程工作,技术招聘{% endblock %}
+
+{% block description %}在线招聘平台汇聚优质Python及技术岗位，提供全职、兼职、实习、外包等多种工作机会，支持远程办公。为程序员和企业提供高效的人才匹配服务。{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "在线招聘平台",
+  "url": "{{ SITE_URL }}",
+  "description": "专注于Python及相关技术岗位的在线招聘平台",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "{{ SITE_URL }}/app/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "在线招聘平台",
+  "url": "{{ SITE_URL }}",
+  "logo": "{{ SITE_URL }}{% static 'img/logo.png' %}",
+  "description": "专注于Python及技术人才的在线招聘服务平台"
+}
+</script>
+{% endblock %}
+
 {% block css %}
 <style>
     /* Turnstile验证遮罩层 */
@@ -117,6 +150,7 @@
 <script>
 // Turnstile验证成功回调
 function onTurnstileSuccess(token) {
+    console.log('token--->', token);
     console.log('Turnstile验证成功');
 
     // 将token保存到sessionStorage
@@ -128,7 +162,7 @@ function onTurnstileSuccess(token) {
     document.getElementById('turnstile-overlay').classList.add('verified');
     document.getElementById('content-wrapper').classList.add('verified');
 
-    // 可选：发送token到后端验证
+    // 发送token到后端验证（可选的，进一步增强安全性）
     verifyTokenOnServer(token);
 }
 
