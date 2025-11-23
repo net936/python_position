@@ -302,84 +302,65 @@ python_position/
 
 ---
 
-## ⚙️ 配置说明
-
-### 数据库配置
-
-在 `server/settings.py` 中修改：
-
-```python
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': '数据库名',
-        'USER': '用户名',
-        'PASSWORD': '密码',
-        'HOST': '主机地址',
-        'PORT': '端口',
-    }
-}
-```
-
-### 静态文件配置
-
-```python
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-```
-
-### 频率限制配置
-
-在视图中使用装饰器：
-
-```python
-@ratelimit(key='ip', rate='100/h')  # 每小时100次
-```
-
----
 
 ## 🚀 部署指南
 
-### 1. 收集静态文件
 
-```bash
-python manage.py collectstatic
+### 1. 准备资料
+
+一台服务器（Ubuntu）， 并安装nginx、mysql 8.0、python 3.10。并将源码上传到服务器。
+
+### 2. 恢复数据库
+
+先创建数据库
+
+```
+CREATE DATABASE IF NOT EXISTS python_position DEFAULT CHARSET utf8 COLLATE utf8_general_ci
 ```
 
-### 2. 配置生产环境
+恢复数据库sql语句
 
-在 `settings.py` 中：
-
-```python
-DEBUG = False
-ALLOWED_HOSTS = ['your-domain.com', 'www.your-domain.com']
+```
+source xxx/xxx/python_position.sql
 ```
 
-### 3. 使用 Gunicorn + Nginx
+### 3. 配置settings文件
 
-安装 Gunicorn：
+```
+// 加入域名
+ALLOWED_HOSTS = ['*', '127.0.0.1', 'localhost', 'position.gitapp.cn']
 
-```bash
-pip install gunicorn
+// 配置数据库
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'python_position',  #  数据库
+        'USER': 'root',
+        'PASSWORD': '123456',  #  密码
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    }
+}
+
+// 配置网站域名
+SITE_PROTOCOL = os.environ.get('SITE_PROTOCOL', 'https')  # 协议: http 或 https
+SITE_DOMAIN = os.environ.get('SITE_DOMAIN', 'position.gitapp.cn')  # 域名
+SITE_URL = f"{SITE_PROTOCOL}://{SITE_DOMAIN}"  # 完整网站地址
+
 ```
 
-启动 Gunicorn：
+### 4. 启动服务
 
-```bash
-gunicorn server.wsgi:application --bind 0.0.0.0:8000
+```
+python manage.py runserver 0.0.0.0:8000
 ```
 
-配置 Nginx：
+### 5. 配置nginx
 
 ```nginx
 server {
     listen 80;
-    server_name your-domain.com;
-
-    location /static/ {
-        alias /path/to/staticfiles/;
-    }
+    server_name xxxxxxxx.com;
 
     location / {
         proxy_pass http://127.0.0.1:8000;
@@ -388,6 +369,13 @@ server {
     }
 }
 ```
+然后重启nginx
+
+```
+nginx -s reload
+```
+
+  
 
 ---
 
@@ -475,13 +463,7 @@ SOFTWARE.
 
 ---
 
-## 📧 联系方式
 
-- **作者：** Python招聘平台开发团队
-- **GitHub：** [https://github.com/geeeeeeeek/](https://github.com/geeeeeeeek/)
-- **问题反馈：** 请在 GitHub Issues 中提交
-
----
 
 ## 🙏 鸣谢
 
