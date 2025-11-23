@@ -14,4 +14,5 @@ def site_settings(request):
         'SITE_PROTOCOL': settings.SITE_PROTOCOL,
         'SITE_DOMAIN': settings.SITE_DOMAIN,
         'SITE_URL': settings.SITE_URL,
+        'TURNSTILE_ENABLED': settings.TURNSTILE_ENABLED,
     }

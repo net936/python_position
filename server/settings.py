@@ -132,6 +132,9 @@ SITE_URL = f"{SITE_PROTOCOL}://{SITE_DOMAIN}"  # 完整网站地址
 
 # Cloudflare Turnstile 配置
 
+# Turnstile 验证开关（True=启用验证，False=关闭验证）
+TURNSTILE_ENABLED = False
+
 # 测试环境（使用测试密钥）
 TURNSTILE_SITE_KEY = '3x00000000000000000000FF'
 TURNSTILE_SECRET_KEY = '1x0000000000000000000000000000000AA'

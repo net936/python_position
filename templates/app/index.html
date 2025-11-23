@@ -36,6 +36,7 @@
 
 {% block css %}
 <style>
+    {% if TURNSTILE_ENABLED %}
     /* Turnstile验证遮罩层 */
     #turnstile-overlay {
         position: fixed;
@@ -144,11 +145,19 @@
         pointer-events: auto;
         transition: opacity 0.3s ease;
     }
+    {% else %}
+    /* Turnstile 关闭时，直接显示内容 */
+    #content-wrapper {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    {% endif %}
 </style>
 {% endblock css %}
 
 {% block content %}
 
+{% if TURNSTILE_ENABLED %}
 <!-- Turnstile验证遮罩层 -->
 <div id="turnstile-overlay">
     <div class="turnstile-container">
@@ -182,6 +191,7 @@
         </p>
     </div>
 </div>
+{% endif %}
 
 <!-- 主要内容区域 -->
 <div id="content-wrapper">
@@ -221,6 +231,7 @@
 {% endblock content %}
 
 {% block javascript %}
+{% if TURNSTILE_ENABLED %}
 <!-- Cloudflare Turnstile Script -->
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
@@ -302,22 +313,6 @@ function retryVerification() {
     location.reload();
 }
 
-// 获取Cookie函数（保留，备用）
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
 // 页面加载时检查是否已验证
 document.addEventListener('DOMContentLoaded', function() {
     const verified = sessionStorage.getItem('turnstile_verified');
@@ -346,5 +341,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+{% endif %}
 {% endblock javascript %}
 
