@@ -73,6 +73,67 @@
         margin-bottom: 30px;
     }
 
+    /* 加载状态 */
+    .loading-spinner {
+        display: none;
+        margin-top: 20px;
+    }
+
+    .loading-spinner.active {
+        display: block;
+    }
+
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #2185d0;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+        margin-top: 15px;
+        color: #2185d0;
+        font-size: 14px;
+    }
+
+    /* 错误状态 */
+    .error-message {
+        display: none;
+        margin-top: 20px;
+        padding: 15px;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 4px;
+        color: #856404;
+    }
+
+    .error-message.active {
+        display: block;
+    }
+
+    .retry-button {
+        margin-top: 15px;
+        padding: 10px 25px;
+        background: #2185d0;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .retry-button:hover {
+        background: #1a6bb8;
+    }
+
     #content-wrapper {
         opacity: 0.3;
         pointer-events: none;
@@ -92,14 +153,30 @@
 <div id="turnstile-overlay">
     <div class="turnstile-container">
         <h2>🤖 安全验证</h2>
-        <p>请完成验证以继续访问</p>
+        <p id="verify-text">请完成验证以继续访问</p>
+
         <!-- Cloudflare Turnstile Widget -->
-        <div class="cf-turnstile"
-             data-sitekey="{{ turnstile_site_key }}"
-             data-callback="onTurnstileSuccess"
-             data-error-callback="onTurnstileError"
-             data-theme="light">
+        <div id="turnstile-widget">
+            <div class="cf-turnstile"
+                 data-sitekey="{{ turnstile_site_key }}"
+                 data-callback="onTurnstileSuccess"
+                 data-error-callback="onTurnstileError"
+                 data-theme="light">
+            </div>
         </div>
+
+        <!-- 加载状态 -->
+        <div id="loading-spinner" class="loading-spinner">
+            <div class="spinner"></div>
+            <div class="loading-text">正在验证，请稍候...</div>
+        </div>
+
+        <!-- 错误提示 -->
+        <div id="error-message" class="error-message">
+            <p id="error-text">验证失败，请重试</p>
+            <button class="retry-button" onclick="retryVerification()">重新验证</button>
+        </div>
+
         <p style="margin-top: 20px; font-size: 12px; color: #999;">
             由 Cloudflare Turnstile 提供安全保护
         </p>
@@ -150,54 +227,82 @@
 <script>
 // Turnstile验证成功回调
 function onTurnstileSuccess(token) {
-    console.log('token--->', token);
-    console.log('Turnstile验证成功');
+    console.log('Turnstile前端验证成功，token:', token);
 
-    // 将token保存到sessionStorage
-    sessionStorage.setItem('turnstile_token', token);
-    sessionStorage.setItem('turnstile_verified', 'true');
-    sessionStorage.setItem('turnstile_verified_time', Date.now());
+    // 隐藏 Turnstile widget
+    document.getElementById('turnstile-widget').style.display = 'none';
 
-    // 隐藏遮罩层，显示内容
-    document.getElementById('turnstile-overlay').classList.add('verified');
-    document.getElementById('content-wrapper').classList.add('verified');
+    // 显示加载状态
+    document.getElementById('loading-spinner').classList.add('active');
+    document.getElementById('verify-text').textContent = '正在验证您的身份...';
 
-    // 发送token到后端验证（可选的，进一步增强安全性）
+    // 立即发送到后端验证（必须）
     verifyTokenOnServer(token);
 }
 
 // Turnstile验证失败回调
 function onTurnstileError() {
-    console.error('Turnstile验证失败');
-    alert('验证失败，请刷新页面重试');
+    console.error('Turnstile前端验证失败');
+    showError('验证组件加载失败，请刷新页面重试');
 }
 
-// 发送token到后端验证（可选）
+// 发送token到后端验证（必须）
 function verifyTokenOnServer(token) {
     fetch('/app/verify-turnstile/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             'turnstile-token': token
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('HTTP error ' + response.status);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             console.log('后端验证成功');
+
+            // 保存验证状态到 sessionStorage
+            sessionStorage.setItem('turnstile_token', token);
+            sessionStorage.setItem('turnstile_verified', 'true');
+            sessionStorage.setItem('turnstile_verified_time', Date.now());
+
+            // 隐藏遮罩层，显示内容
+            document.getElementById('turnstile-overlay').classList.add('verified');
+            document.getElementById('content-wrapper').classList.add('verified');
         } else {
-            console.error('后端验证失败');
+            console.error('后端验证失败:', data.error);
+            showError('安全验证失败：' + (data.error || '未知错误'));
         }
     })
     .catch(error => {
         console.error('验证请求失败:', error);
+        showError('网络请求失败，请检查您的网络连接');
     });
 }
 
-// 获取Cookie函数
+// 显示错误信息
+function showError(message) {
+    // 隐藏加载状态
+    document.getElementById('loading-spinner').classList.remove('active');
+
+    // 显示错误信息
+    document.getElementById('error-text').textContent = message;
+    document.getElementById('error-message').classList.add('active');
+}
+
+// 重试验证
+function retryVerification() {
+    // 刷新页面重新验证
+    location.reload();
+}
+
+// 获取Cookie函数（保留，备用）
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -226,14 +331,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (hoursDiff < 24) {
             // 验证仍然有效，直接显示内容
+            console.log('使用缓存的验证状态');
             document.getElementById('turnstile-overlay').classList.add('verified');
             document.getElementById('content-wrapper').classList.add('verified');
         } else {
-            // 验证已过期，清除sessionStorage
+            // 验证已过期，清除 sessionStorage
+            console.log('验证已过期，需要重新验证');
             sessionStorage.removeItem('turnstile_verified');
             sessionStorage.removeItem('turnstile_verified_time');
             sessionStorage.removeItem('turnstile_token');
         }
+    } else {
+        console.log('未找到验证记录，需要验证');
     }
 });
 </script>
