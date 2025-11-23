@@ -1,6 +1,12 @@
+import json
+import requests
 from django.contrib import messages
 from django.shortcuts import render
 from django.db.models import Q
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.conf import settings as django_settings
 
 # Create your views here.
 from django.urls import reverse
@@ -26,6 +32,7 @@ class IndexView(generic.ListView):
         page_list = get_page_list(paginator, page)
         context['c'] = self.c
         context['page_list'] = page_list
+        context['turnstile_site_key'] = django_settings.TURNSTILE_SITE_KEY
         return context
 
     def get_queryset(self):
@@ -104,3 +111,54 @@ class CommitView(generic.CreateView):
     def get_success_url(self):
         messages.success(self.request, "发布成功! 等待审核通过后将会展示")
         return reverse('app:commit')
+
+
+@require_POST
+def verify_turnstile(request):
+    """验证 Cloudflare Turnstile token"""
+    try:
+        data = json.loads(request.body)
+        token = data.get('turnstile-token', '')
+
+        if not token:
+            return JsonResponse({'success': False, 'error': '缺少验证token'}, status=400)
+
+        # 向 Cloudflare 验证 token
+        verify_url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
+        verify_data = {
+            'secret': django_settings.TURNSTILE_SECRET_KEY,
+            'response': token,
+            'remoteip': get_client_ip(request)
+        }
+
+        response = requests.post(verify_url, data=verify_data, timeout=10)
+        result = response.json()
+        print('verify--->', result)
+
+        if result.get('success'):
+            # 可以在 session 中记录验证状态
+            request.session['turnstile_verified'] = True
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': '验证失败',
+                'error_codes': result.get('error-codes', [])
+            })
+
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': '无效的请求数据'}, status=400)
+    except requests.RequestException as e:
+        return JsonResponse({'success': False, 'error': f'验证服务请求失败: {str(e)}'}, status=500)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': f'服务器错误: {str(e)}'}, status=500)
+
+
+def get_client_ip(request):
+    """获取客户端真实IP地址"""
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
